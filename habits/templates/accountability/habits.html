@@ -1,0 +1,11 @@
+<form method="post">{% csrf_token %}
+  <h1>All habits</h1>
+    <table>
+        {{ habit_formset }}
+    </table>
+  <h1>Today's completion</h1>
+    <table>
+        {{ habitcompletion_formset }}
+    </table>
+    <input type="submit" value="Submit">
+</form>

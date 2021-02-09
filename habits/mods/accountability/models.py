@@ -4,6 +4,7 @@ from habits.core.models import TimeStampedModel
 
 class Habit(TimeStampedModel):
     name = models.CharField(max_length=256, blank=False, null=False)
+    one_word_label = models.CharField(max_length=32, null=True)
 
     def __str__(self):
         return self.name
