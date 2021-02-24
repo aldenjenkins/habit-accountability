@@ -23,6 +23,7 @@ class HabitForm(forms.ModelForm):
         fields = (
             "id",
             "name",
+            "one_word_label",
         )
         read_only_fields = (
             "id",
@@ -36,7 +37,7 @@ def manage_habits(request):
         HabitCompletion, form=HabitCompletionForm, fields=("habit", "did_complete")
     )
     HabitFormSet = forms.modelformset_factory(
-        Habit, can_delete=True, form=HabitForm, fields=("name",), exclude=("create_ts",)
+        Habit, can_delete=True, form=HabitForm, fields=("name","one_word_label"), exclude=("create_ts",)
     )
     if request.method == "POST":
         habit_formset = HabitFormSet(request.POST, request.FILES, prefix="habits")
