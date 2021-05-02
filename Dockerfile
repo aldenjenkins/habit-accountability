@@ -1,4 +1,4 @@
-FROM python3.7:slim
+FROM python:3.7-slim
 ENV PYTHONUNBUFFERED=1
 WORKDIR /app
 CORY requirements.txt /app/requirements.txt
