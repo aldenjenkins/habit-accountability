@@ -42,6 +42,10 @@ def generate_stats_dict(completion_entries):
             ]["incompleted_habits"].append(entry.habit)
     return stats
 
+def generate_todays_completions():
+    today = timezone.localdate()
+    for habit in Habit.objects.all():
+        HabitCompletion.objects.get_or_create(habit=habit, create_ts__date=today)
 
 class CalendarMixin:
     num_calendars_per_row = 4
@@ -50,6 +54,8 @@ class CalendarMixin:
     num_calendars_to_show = 12
 
     def __init__(self, save_path: str):
+        generate_todays_completions()
+
         self.save_path = save_path
         self.img = Image.new("RGB", size=(1920, 1080), color=(255, 255, 255))
 
@@ -171,7 +177,20 @@ class CalendarMixin:
                 ):
                     if (
                         len(self.accountability_stats[month][day]["completed_habits"])
-                        >= 5
+                        / max(
+                            len(
+                                self.accountability_stats[month][day][
+                                    "completed_habits"
+                                ]
+                            )
+                            + len(
+                                self.accountability_stats[month][day][
+                                    "incompleted_habits"
+                                ]
+                            ),
+                            1,
+                        )
+                        >= 0.8
                     ):
                         # Draw green
                         self.draw.rectangle(

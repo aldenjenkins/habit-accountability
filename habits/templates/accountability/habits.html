@@ -1,11 +1,30 @@
-<form method="post">{% csrf_token %}
-  <h1>All habits</h1>
-    <table>
-        {{ habit_formset }}
-    </table>
-  <h1>Today's completion</h1>
-    <table>
-        {{ habitcompletion_formset }}
-    </table>
-    <input type="submit" value="Submit">
-</form>
+{% load render_bundle from webpack_loader %}
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    {% render_bundle 'main' 'css' %}
+    <title>Habits</title>
+  </head>
+  <body style="background-color: #d47515;">
+    <header>
+      <h1 id="heading" class="text-white text-center my-4"></h1>
+    </header>
+      <div id="habits" style="width: 100%">{% csrf_token %}
+      </div>
+    {% render_bundle 'main' 'js' %}
+  </body>
+</html>
+      {% comment %}
+      <form method="post">{% csrf_token %}
+        <h1>All habits</h1>
+          <table>
+              {{ habit_formset }}
+          </table>
+        <h1>Today's completion</h1>
+          <table>
+              {{ habitcompletion_formset }}
+          </table>
+          <input type="submit" value="Submit">
+      </form>
+      {% endcomment %}

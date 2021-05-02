@@ -7,7 +7,7 @@ class Habit(TimeStampedModel):
     one_word_label = models.CharField(max_length=32, null=True)
 
     def __str__(self):
-        return self.name
+        return self.one_word_label
 
 
 class HabitCompletion(TimeStampedModel):

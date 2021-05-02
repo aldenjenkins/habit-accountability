@@ -6,6 +6,11 @@ __pycache__/
 # C extensions
 *.so
 
+node_modules
+collected-static
+habits/static/bundles
+webpack-stats.json
+
 # Distribution / packaging
 .Python
 build/
