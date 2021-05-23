@@ -9,7 +9,7 @@ router.register(r'api/habit', views.HabitViewSet, basename='habit')
 router.register(r'api/habit_completion', views.HabitCompletionViewSet, basename='habit-accountability')
 
 urlpatterns = [
-    path('', views.manage_habits, name='manage_habits'),
+    # path('', views.manage_habits, name='manage_habits'),
 ]
 
 urlpatterns += router.urls

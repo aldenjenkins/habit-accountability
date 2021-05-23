@@ -1,8 +1,11 @@
 from datetime import datetime, timedelta
 
 from django import forms
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Exists, OuterRef
 from django.shortcuts import render, reverse, HttpResponseRedirect
 from django.utils.timezone import localdate
+from django.utils import timezone
 from rest_framework.viewsets import ModelViewSet
 
 from habits.mods.accountability.forms import HabitCompletionForm, HabitForm
@@ -50,7 +53,7 @@ def manage_habits(request):
     )
 
 
-class HabitViewSet(ModelViewSet):
+class HabitViewSet(ModelViewSet, LoginRequiredMixin):
     model = Habit
     serializer_class = HabitSerializer
 
@@ -59,21 +62,31 @@ class HabitViewSet(ModelViewSet):
         date_filter = self.request.GET.get('date')
         if date_filter:
             date_filter = datetime.strptime(date_filter, "%Y-%m-%d",)
-            habit_qs = habit_qs.filter(create_ts__lte=date_filter)
+            habit_qs = habit_qs.filter(create_ts__date__lte=date_filter)
         return habit_qs
 
 
-class HabitCompletionViewSet(ModelViewSet):
+class HabitCompletionViewSet(ModelViewSet, LoginRequiredMixin):
     model = HabitCompletion
     serializer_class = HabitCompletionSerializer
 
     def get_queryset(self):
-        # today = localdate()
-        # for habit in Habit.objects.all():
-        #     HabitCompletion.objects.get_or_create(habit=habit, create_ts__date=today)
-        # habitcompletions = HabitCompletion.objects.filter(
-        #     create_ts__date=today
-        # )
+        today = localdate()
+        for habit in Habit.objects.filter(
+                create_ts__date__lte=timezone.now()
+            ).exclude(
+                Exists(
+                    HabitCompletion.objects.filter(
+                        habit=OuterRef('pk'),
+                        create_ts__date=timezone.now()
+                    )
+                )
+            ):
+            print("creating new habitcompletion for:", habit)
+            HabitCompletion.objects.create(habit=habit)
+        habitcompletions = HabitCompletion.objects.filter(
+            create_ts__date=timezone.now()
+        )
         date_filter = self.request.GET.get('date')
         date_filter = datetime.strptime(date_filter, "%Y-%m-%d").date()
         habit_completions = HabitCompletion.objects.filter(create_ts__date=date_filter)

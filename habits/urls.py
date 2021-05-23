@@ -22,4 +22,5 @@ from habits.mods.accountability import urls as habit_urls
 urlpatterns = [
     path('', admin.site.urls),
     path('habits/', include(habit_urls)),
+    path('rest_auth/', include('rest_auth.urls'))
 ]

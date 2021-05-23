@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/3.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
+import datetime
 import os
 import sys
 
@@ -39,7 +40,7 @@ STATICFILES_FINDERS = (
 # Skip copying `node_modules/` files during `collectstatic` step.
 # django-compressor will copy any required files from `node_modules/`.
 STATICFILES_DIRS = (
-        root('habits', 'static'),
+   root('habits', 'static'),
 )
 if len(sys.argv) < 2 or not sys.argv[1] == 'collectstatic':
     STATICFILES_FINDERS += (
@@ -91,6 +92,8 @@ ALLOWED_HOSTS = ['*']
 
 # Application definition
 
+REST_USE_JWT = True
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -106,6 +109,7 @@ INSTALLED_APPS = [
     'habits',
     'habits.mods.accountability',
     'habits.mods.calendar',
+    'rest_auth'
 ]
 
 MIDDLEWARE = [
@@ -118,7 +122,18 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+    ),
+}
 
+JWT_AUTH = {
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(days=183),
+}
 ROOT_URLCONF = 'habits.urls'
 
 CORS_ORIGIN_ALLOW_ALL = True # If this is used then `CORS_ORIGIN_WHITELIST` will not have any effect
@@ -151,11 +166,14 @@ WSGI_APPLICATION = 'habits.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
-
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': get_environ_setting('DB_NAME', 'habits'),
+        'USER': get_environ_setting('DB_USER', 'habits'),
+        'PASSWORD': get_environ_setting('DB_PASSWORD', ''),
+        'HOST': get_environ_setting('DB_HOST', '127.0.0.1'),
+        'PORT': get_environ_setting('DB_PORT', '5432'),
     }
 }
 

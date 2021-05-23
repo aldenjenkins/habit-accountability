@@ -4,4 +4,4 @@ WORKDIR /app
 CORY requirements.txt /app/requirements.txt
 RUN pip install -r requirements.txt --use-deprecated=legacy-resolver
 COPY . /app/
-
+ENV DJANGO_SETTINGS_MODULE="habits.settings.production"
