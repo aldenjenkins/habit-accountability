@@ -16,6 +16,22 @@ import sys
 from pathlib import Path
 
 from habits.settings.utils import get_environ_setting, get_last_git_commit_hash
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
+
+sentry_sdk.init(
+    dsn="https://044c8a4f6fa04556954c9c69a5a22742@o192338.ingest.sentry.io/5778904",
+    integrations=[DjangoIntegration()],
+
+    # Set traces_sample_rate to 1.0 to capture 100%
+    # of transactions for performance monitoring.
+    # We recommend adjusting this value in production.
+    traces_sample_rate=1.0,
+
+    # If you wish to associate users to errors (assuming you are using
+    # django.contrib.auth) you may enable sending PII data.
+    send_default_pii=True
+)
 
 TESTING = (len(sys.argv) > 1 and sys.argv[1] == 'test') or bool(os.environ.get('FF_TESTING')) or 'pytest' in sys.modules
 if TESTING:
